@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useFetch } from '../hooks/useFetch';
 import { useForm } from '../hooks/useForm';
 import { useModal } from '../hooks/useModal';
-import { MdEdit, MdDelete, MdAdd, MdClose } from 'react-icons/md';
+import { MdEdit, MdDelete, MdAdd, MdClose, MdEvent } from 'react-icons/md';
 
 export default function CitasView() {
   const { data: citas, loading: loadingCitas, error, refetch } = useFetch('http://localhost:3000/api/citas');
@@ -16,7 +16,6 @@ export default function CitasView() {
   const formatForInput = (dateString) => {
     if (!dateString) return '';
     const d = new Date(dateString);
-    // Ajuste de zona horaria local para evitar saltos de día
     return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
   };
 
@@ -82,19 +81,73 @@ export default function CitasView() {
   if (error) return <div className="p-10 text-xl text-red-500">Error: {error}</div>;
 
   return (
-    <div className="p-8 bg-vet-white min-h-screen">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-4xl font-extrabold text-vet-dark">Control de Citas</h1>
+    <div className="p-4 md:p-8 bg-vet-white min-h-screen">
+      
+      {/* Título y Botón alineados a la izquierda y adaptables */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 pb-4 border-b border-vet-light">
+        <div className="flex items-center space-x-3">
+          <div className="p-3 bg-vet-light text-vet-dark rounded-2xl hidden sm:block">
+            <MdEvent className="w-8 h-8" />
+          </div>
+          <div>
+            <h1 className="text-3xl md:text-4xl font-extrabold text-vet-dark">Control de Citas</h1>
+            <p className="text-sm text-gray-500">Administra la programación y turnos de la veterinaria</p>
+          </div>
+        </div>
         <button 
           onClick={handleOpenCreate}
-          className="bg-vet-accent hover:bg-vet-dark text-white px-5 py-3 rounded-xl flex items-center shadow-lg transition-all"
+          className="w-full sm:w-auto bg-vet-accent hover:bg-vet-dark text-white px-5 py-3 rounded-xl flex items-center justify-center shadow-lg transition-all cursor-pointer font-bold"
         >
           <MdAdd className="w-6 h-6 mr-2" />
           Agendar Cita
         </button>
       </div>
 
-      <div className="overflow-x-auto bg-white rounded-2xl shadow-sm border border-vet-light">
+      {/* VISTA MÓVIL Y TABLET: Tarjetas (Cards) flexibles con detalles organizados al lado */}
+      <div className="grid grid-cols-1 gap-4 md:hidden">
+        {citas?.map(cita => (
+          <div key={cita.id} className="bg-white p-5 rounded-2xl shadow-sm border border-vet-light flex flex-col justify-between space-y-4">
+            <div className="flex justify-between items-start">
+              <div>
+                <span className="text-xs font-bold px-2.5 py-1 bg-vet-light text-vet-dark rounded-md">
+                  #{cita.id.toString().padStart(4, '0')}
+                </span>
+                <h3 className="text-lg font-bold text-gray-800 mt-2">{cita.paciente_nombre || 'Desconocido'}</h3>
+                <p className="text-sm text-gray-600 font-medium">Motivo: <span className="text-gray-800">{cita.motivo}</span></p>
+              </div>
+              <div className="flex space-x-2">
+                <button onClick={() => handleOpenEdit(cita)} className="p-2 bg-blue-100 text-blue-700 rounded-xl cursor-pointer">
+                  <MdEdit className="w-5 h-5" />
+                </button>
+                <button onClick={() => handleDelete(cita.id)} className="p-2 bg-red-100 text-red-700 rounded-xl cursor-pointer">
+                  <MdDelete className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+            
+            <div className="pt-3 border-t border-gray-100 flex justify-between items-center text-sm">
+              <span className="text-gray-500">
+                {new Date(cita.fecha).toLocaleString('es-ES', { dateStyle: 'medium', timeStyle: 'short' })}
+              </span>
+              <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                cita.estado === 'Completada' ? 'bg-green-100 text-green-700' :
+                cita.estado === 'Cancelada' ? 'bg-red-100 text-red-700' :
+                'bg-yellow-100 text-yellow-700'
+              }`}>
+                {cita.estado}
+              </span>
+            </div>
+          </div>
+        ))}
+        {citas?.length === 0 && (
+          <div className="p-8 text-center text-gray-500 bg-white rounded-2xl border border-vet-light">
+            No hay citas programadas en la agenda.
+          </div>
+        )}
+      </div>
+
+      {/* VISTA ESCRITORIO: Tabla tradicional optimizada */}
+      <div className="hidden md:block overflow-x-auto bg-white rounded-2xl shadow-sm border border-vet-light">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-vet-light text-vet-dark">
@@ -125,10 +178,10 @@ export default function CitasView() {
                   </span>
                 </td>
                 <td className="p-4 flex justify-center space-x-3">
-                  <button onClick={() => handleOpenEdit(cita)} className="p-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors">
+                  <button onClick={() => handleOpenEdit(cita)} className="p-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors cursor-pointer">
                     <MdEdit className="w-5 h-5" />
                   </button>
-                  <button onClick={() => handleDelete(cita.id)} className="p-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors">
+                  <button onClick={() => handleDelete(cita.id)} className="p-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors cursor-pointer">
                     <MdDelete className="w-5 h-5" />
                   </button>
                 </td>
@@ -143,12 +196,13 @@ export default function CitasView() {
         </table>
       </div>
 
+      {/* Modal Reutilizable */}
       {isOpen && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 backdrop-blur-sm">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 backdrop-blur-sm p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
             <div className="flex justify-between items-center p-6 bg-vet-dark text-white">
               <h2 className="text-2xl font-bold">{editingId ? 'Reprogramar Cita' : 'Agendar Cita'}</h2>
-              <button onClick={closeModal} className="hover:text-vet-light transition-colors">
+              <button onClick={closeModal} className="hover:text-vet-light transition-colors cursor-pointer">
                 <MdClose className="w-6 h-6" />
               </button>
             </div>
@@ -186,10 +240,10 @@ export default function CitasView() {
               )}
 
               <div className="flex justify-end space-x-4 pt-4 border-t border-gray-100">
-                <button type="button" onClick={closeModal} className="px-6 py-3 font-semibold text-gray-600 hover:bg-gray-100 rounded-xl transition-colors">
+                <button type="button" onClick={closeModal} className="px-6 py-3 font-semibold text-gray-600 hover:bg-gray-100 rounded-xl transition-colors cursor-pointer">
                   Cancelar
                 </button>
-                <button type="submit" className="px-6 py-3 font-bold text-white bg-vet-dark hover:bg-vet-accent rounded-xl transition-colors shadow-md">
+                <button type="submit" className="px-6 py-3 font-bold text-white bg-vet-dark hover:bg-vet-accent rounded-xl transition-colors shadow-md cursor-pointer">
                   {editingId ? 'Guardar Cambios' : 'Confirmar Cita'}
                 </button>
               </div>
