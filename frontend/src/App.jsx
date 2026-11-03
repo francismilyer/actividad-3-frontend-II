@@ -4,6 +4,8 @@ import Sidebar from './components/Sidebar';
 import ProductosView from './views/ProductosView';
 import PacientesView from './views/PacientesView';
 import CitasView from './views/CitasView';
+import ClientesView from './views/ClientesView';
+import DashboardView from './views/DashboardView';
 
 function App() {
   const currentView = useSelector((state) => state.ui.currentView);
@@ -11,7 +13,7 @@ function App() {
   const renderView = () => {
     switch (currentView) {
       case 'dashboard':
-        return <div className="p-10 text-vet-dark text-2xl font-bold">Dashboard en construcción...</div>;
+        return <DashboardView />;
       case 'productos':
         return <ProductosView />;
       case 'pacientes':
@@ -19,7 +21,7 @@ function App() {
       case 'citas':
         return <CitasView />;
       case 'clientes':
-        return <div className="p-10 text-vet-dark text-2xl font-bold">Directorio de Clientes</div>;
+        return <ClientesView />;
       default:
         return <LandingPage />;
     }
