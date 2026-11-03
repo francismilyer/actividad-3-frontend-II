@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+@theme {
+  --color-vet-dark: #800020;
+  --color-vet-light: #F3E6D5;
+  --color-vet-white: #FFF9F2;
+  --color-vet-accent: #D45060;
+}
