@@ -2,6 +2,7 @@ import { useSelector } from 'react-redux';
 import LandingPage from './components/LandingPage';
 import Sidebar from './components/Sidebar';
 import ProductosView from './views/ProductosView';
+import PacientesView from './views/PacientesView';
 
 function App() {
   const currentView = useSelector((state) => state.ui.currentView);
@@ -13,7 +14,7 @@ function App() {
       case 'productos':
         return <ProductosView />;
       case 'pacientes':
-        return <div className="p-10 text-vet-dark text-2xl font-bold">Gestión de Pacientes</div>;
+        return <PacientesView />;
       case 'citas':
         return <div className="p-10 text-vet-dark text-2xl font-bold">Control de Citas</div>;
       case 'clientes':
