@@ -3,6 +3,7 @@ import LandingPage from './components/LandingPage';
 import Sidebar from './components/Sidebar';
 import ProductosView from './views/ProductosView';
 import PacientesView from './views/PacientesView';
+import CitasView from './views/CitasView';
 
 function App() {
   const currentView = useSelector((state) => state.ui.currentView);
@@ -16,7 +17,7 @@ function App() {
       case 'pacientes':
         return <PacientesView />;
       case 'citas':
-        return <div className="p-10 text-vet-dark text-2xl font-bold">Control de Citas</div>;
+        return <CitasView />;
       case 'clientes':
         return <div className="p-10 text-vet-dark text-2xl font-bold">Directorio de Clientes</div>;
       default:
