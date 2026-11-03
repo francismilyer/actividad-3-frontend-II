@@ -1,6 +1,7 @@
 import { useSelector } from 'react-redux';
 import LandingPage from './components/LandingPage';
 import Sidebar from './components/Sidebar';
+import ProductosView from './views/ProductosView';
 
 function App() {
   const currentView = useSelector((state) => state.ui.currentView);
@@ -10,7 +11,7 @@ function App() {
       case 'dashboard':
         return <div className="p-10 text-vet-dark text-2xl font-bold">Dashboard en construcción...</div>;
       case 'productos':
-        return <div className="p-10 text-vet-dark text-2xl font-bold">Catálogo de Productos</div>;
+        return <ProductosView />;
       case 'pacientes':
         return <div className="p-10 text-vet-dark text-2xl font-bold">Gestión de Pacientes</div>;
       case 'citas':
